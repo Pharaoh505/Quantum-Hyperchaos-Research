@@ -1,2 +1,1 @@
-# quantum-hyperchaos-research
-Investigating hyperchaotic driving effects on qubit coherence and entanglement
+# My Quantum Hyperchaos Research
