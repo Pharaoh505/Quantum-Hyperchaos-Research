@@ -1,1 +1,1 @@
-# My Quantum Hyperchaos Research
+# Quantum Hyperchaos Research
