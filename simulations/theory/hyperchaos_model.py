@@ -1,18 +1,25 @@
 import numpy as np
+from scipy.integrate import solve_ivp
 
-class HyperchaoticRossler:
-    def __init__(self):
-        self.params = {'a': 0.25, 'b': 3, 'c': 0.5, 'd': 0.05}
-    
-    def equations(self, t, state):
-        x, y, z, w = state
-        dx = -y - z
-        dy = x + self.params['a']*y + w
-        dz = self.params['b'] + x*z
-        dw = -self.params['c']*z + self.params['d']*w
-        return np.array([dx, dy, dz, dw])
+def lorenz(t, vec, s=10.0, r=28.0, b=8.0/3.0):
+    x, y, z = vec
+    return [s * (y - x), x * (r - z) - y, x * y - b * z]
 
-if __name__ == "__main__":
-    print("Testing hyperchaotic model...")
-    model = HyperchaoticRossler()
-    print("Derivatives at t=0:", model.equations(0, [0.1, 0, 0, 0]))
+def rossler(t, vec, a=0.2, b=0.2, c=5.7):
+    x, y, z = vec
+    return [-y - z, x + a * y, b + z * (x - c)]
+
+def integrate_driver(fn, start, span, step, args=()):
+    tgrid = np.arange(span[0], span[1] + 1e-12, step)
+    sol = solve_ivp(lambda tt, yy: fn(tt, yy, *args), span, start, t_eval=tgrid, method='RK45', rtol=1e-8)
+    if not sol.success:
+        raise RuntimeError(sol.message)
+    return sol.t, sol.y
+
+def normalize(s):
+    arr = np.asarray(s, dtype=float)
+    m = arr.mean()
+    sd = arr.std()
+    if sd == 0:
+        return arr - m
+    return (arr - m) / (sd + 1e-12)
